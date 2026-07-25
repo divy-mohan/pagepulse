@@ -62,6 +62,17 @@ export default function Home() {
       let detectedImages: string[] = [];
       let detectedMediaFiles: string[] = [];
       let extractedTitleTag: string | null = null;
+      let extractedDescription: string | null = null;
+      let hasViewportMeta = false;
+      let hasRobotsTxt = false;
+      let hasSitemap = false;
+      let canonicalUrl: string | null = null;
+      let h1s: string[] = [];
+      let h2Count = 0;
+      let totalImages = 0;
+      let missingAlt = 0;
+      let scripts: string[] = [];
+      let stylesheets: string[] = [];
       let extractedOgData: Record<string, string> = {};
 
       try {
@@ -78,6 +89,17 @@ export default function Home() {
           detectedImages = proxyData.detected_images || [];
           detectedMediaFiles = proxyData.detected_media || [];
           extractedTitleTag = proxyData.extracted_title || null;
+          extractedDescription = proxyData.extracted_description || null;
+          hasViewportMeta = !!proxyData.has_viewport_meta;
+          hasRobotsTxt = !!proxyData.has_robots_txt;
+          hasSitemap = !!proxyData.has_sitemap;
+          canonicalUrl = proxyData.canonical_url || null;
+          h1s = proxyData.h1s || [];
+          h2Count = proxyData.h2_count || 0;
+          totalImages = proxyData.total_images || 0;
+          missingAlt = proxyData.missing_alt || 0;
+          scripts = proxyData.scripts || [];
+          stylesheets = proxyData.stylesheets || [];
           extractedOgData = proxyData.og_data || {};
         } else {
           realStatusCode = 403;
@@ -95,11 +117,52 @@ export default function Home() {
       const hostname = new URL(targetUrl).hostname;
       const isHttps = targetUrl.startsWith('https');
 
-      // Calculate dynamic score based on real status code
+      // Calculate dynamic score based on real status code & response metrics
       const isSuccess = realStatusCode >= 200 && realStatusCode < 300;
-      const perfScore = isSuccess ? Math.min(100, Math.max(50, 100 - Math.floor(loadTime / 8))) : 30;
-      const seoScore = isSuccess ? 85 : 40;
-      const a11yScore = isSuccess ? 90 : 50;
+      
+      let perfScore = 100;
+      if (!isSuccess) {
+        perfScore = 30;
+      } else {
+        if (loadTime > 1500) perfScore -= 40;
+        else if (loadTime > 800) perfScore -= 25;
+        else if (loadTime > 400) perfScore -= 12;
+        else if (loadTime > 200) perfScore -= 5;
+        
+        const sizeKB = rawText.length / 1024;
+        if (sizeKB > 3000) perfScore -= 15;
+        else if (sizeKB > 1000) perfScore -= 8;
+      }
+      perfScore = Math.max(30, perfScore);
+
+      let seoScore = 100;
+      if (!isSuccess) {
+        seoScore = 30;
+      } else {
+        if (!isHttps) seoScore -= 10;
+        if (!hasViewportMeta) seoScore -= 15;
+        if (!extractedTitleTag) seoScore -= 15;
+        if (!extractedDescription) seoScore -= 15;
+        if (!hasRobotsTxt) seoScore -= 10;
+        if (!hasSitemap) seoScore -= 10;
+        if (h1s.length === 0) seoScore -= 15;
+        if (!canonicalUrl) seoScore -= 10;
+      }
+      seoScore = Math.max(30, seoScore);
+
+      let a11yScore = 100;
+      if (!isSuccess) {
+        a11yScore = 30;
+      } else {
+        if (!hasViewportMeta) a11yScore -= 15;
+        if (h1s.length === 0) a11yScore -= 15;
+        if (totalImages > 0) {
+          const missingAltRatio = missingAlt / totalImages;
+          a11yScore -= Math.round(missingAltRatio * 30);
+        }
+      }
+      a11yScore = Math.max(30, a11yScore);
+
       const overallScore = Math.round((perfScore + seoScore + a11yScore) / 3);
 
       setAuditResult({
@@ -113,22 +176,22 @@ export default function Home() {
           load_time_ms: loadTime,
           page_size_bytes: rawText.length || 15620,
           title: extractedTitleTag || `${hostname} — Target Endpoint API`,
-          meta_description: extractedOgData.description || (isSuccess ? `Audit analysis for ${hostname}` : `HTTP ${realStatusCode} Access Restriction Detected`),
-          has_viewport_meta: true,
-          has_robots_txt: true,
-          has_sitemap: true,
-          canonical_url: targetUrl,
+          meta_description: extractedDescription || extractedOgData.description || (isSuccess ? `Audit analysis for ${hostname}` : `HTTP ${realStatusCode} Access Restriction Detected`),
+          has_viewport_meta: hasViewportMeta,
+          has_robots_txt: hasRobotsTxt,
+          has_sitemap: hasSitemap,
+          canonical_url: canonicalUrl || targetUrl,
           open_graph: { 
             title: extractedOgData.title || extractedTitleTag || hostname, 
-            description: extractedOgData.description || 'Target API', 
+            description: extractedOgData.description || extractedDescription || 'Target API', 
             image: extractedOgData.image || null,
             site_name: extractedOgData.site_name || null,
             type: extractedOgData.type || null,
             url: extractedOgData.url || null
           },
-          headings: { h1_count: isSuccess ? 1 : 0, h2_count: 2, h1_text: [hostname] },
-          images: { total: detectedImages.length, missing_alt: 0, detected_urls: detectedImages },
-          detected_files: { scripts: [], stylesheets: [], media_files: detectedMediaFiles },
+          headings: { h1_count: h1s.length, h2_count: h2Count, h1_text: h1s.length > 0 ? h1s : [hostname] },
+          images: { total: totalImages, missing_alt: missingAlt, detected_urls: detectedImages },
+          detected_files: { scripts: scripts, stylesheets: stylesheets, media_files: detectedMediaFiles },
           https: isHttps,
           redirect_chain: [],
           score: {
