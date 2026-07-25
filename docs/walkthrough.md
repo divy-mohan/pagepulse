@@ -34,7 +34,7 @@ Python_Developer_Divya_Mohan_Singh/
 * **Live Demo URL**: [https://pagepulse-divy.netlify.app/](https://pagepulse-divy.netlify.app/)
 
 ### 3. Screen Recording & Walkthrough Demo
-* **Demonstration Video**: [Watch the walkthrough and local setup recording here](https://drive.google.com/file/d/1EsH4p-RycyfQ4nA8lb36kWqMVgF0hQKD/view?usp=sharing)
+* **Demonstration Video**: [Watch the walkthrough recording here](https://drive.google.com/file/d/1EsH4p-RycyfQ4nA8lb36kWqMVgF0hQKD/view?usp=sharing)
 
 ### 4. Application Screenshots
 * **Desktop Dashboard Layout**: [desktop.png](https://drive.google.com/file/d/1KD6kxnyWsLHikBQ9oRkPYt3OBg50nFzw/view?usp=sharing)
