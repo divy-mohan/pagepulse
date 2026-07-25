@@ -18,8 +18,8 @@ The repository includes a pre-configured `render.yaml` infrastructure file.
 4. Connect your GitHub repository (`pagepulse`).
 5. Render will automatically detect `render.yaml` and provision:
    - **`page-pulse-web`**: Next.js 16 Web Service (Node.js runtime)
-   - **`page-pulse-backend`**: Python REST Engine (Python 3.11 runtime)
-6. Click **Apply**. Render will build and deploy both services automatically!
+    - **`page-pulse-web`**: Next.js 16 Web Service (Node.js runtime)
+6. Click **Apply**. Render will build and deploy the service automatically!
 
 ---
 
@@ -48,25 +48,6 @@ If you prefer to configure services manually on the dashboard:
    - `NODE_ENV`: `production`
    - `PORT`: `3000`
 5. Click **Create Web Service**.
-
----
-
-### 2. Deploy Backend API Engine (Python)
-
-1. Click **New +** → **Web Service**.
-2. Connect `pagepulse` repository.
-3. Configure fields:
-
-| Field | Value |
-|---|---|
-| **Name** | `page-pulse-backend` |
-| **Root Directory** | `backend` |
-| **Runtime** | `Python 3` |
-| **Build Command** | `pip install -r requirements.txt` |
-| **Start Command** | `python auditor.py` |
-| **Instance Type** | Free / Starter |
-
-4. Click **Create Web Service**.
 
 ---
 

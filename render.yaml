@@ -12,15 +12,3 @@ services:
       - key: PORT
         value: 3000
     autoDeploy: true
-
-  # Python Django REST Audit Engine Background Service
-  - type: web
-    name: page-pulse-backend
-    env: python
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: python auditor.py
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-    autoDeploy: true

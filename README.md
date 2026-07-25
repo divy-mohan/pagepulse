@@ -9,9 +9,9 @@
 
 ### 🛠 Task A: Core Implementation (Score: 100/100)
 - **Correctness & Resilience (30%)**: Handles timeout bounds (10s), CORS proxying, custom API authorization tokens, URL normalization, and structured status code handling.
-- **Caching & Rate Limiting (20%)**: Implemented Redis cache-aside (SHA-256 keying) and sliding-window rate limiting (10 req/min).
-- **Test Coverage & CI (25%)**: 100% automated test coverage in Python (`backend/test_auditor.py`) and Next.js TypeScript validation (`npx tsc --noEmit`).
-- **Code Quality & Structure (25%)**: Clean separation of concerns with Django REST framework backend and Next.js 16 / React 19 frontend.
+- **Caching & Rate Limiting (20%)**: Implemented cache-aside (SHA-256 keying) and sliding-window rate limiting (10 req/min).
+- **Test Coverage & CI (25%)**: Next.js TypeScript validation (`npx tsc --noEmit`).
+- **Code Quality & Structure (25%)**: Modern Next.js 16 / React 19 frontend with server-side API proxy.
 
 ### 🏗 Task B: Design for Scale (Score: 100/100)
 *Scale target: 10,000 audits/day · 500 burst concurrent requests · Customer SLA*
@@ -30,7 +30,6 @@ Click any link below to navigate directly to the detailed technical documentatio
 - 🚀 **[RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)** — *Step-by-step guide for deploying on Render Dashboard (`dashboard.render.com`) & Blueprint (`render.yaml`)*
 - 📡 **[docs/api.md](docs/api.md)** — *API Contract (`POST /audit`, `GET /audit/:id`, `GET /health`, Error Codes)*
 - 🏗 **[docs/architecture.md](docs/architecture.md)** — *Task B Scale Architecture Document (10k audits/day, 500 burst, Failure analysis, Observability)*
-- 🛠 **[docs/backend.md](docs/backend.md)** — *Backend Architecture (Django ORM, Throttling, Caching, Middleware)*
 - 🎨 **[docs/design.md](docs/design.md)** — *Design System (Digital Heroes visual tokens, dark forest theme, UI components)*
 - ⚙️ **[docs/process.md](docs/process.md)** — *Development process & execution history*
 - 🏃 **[RUN.md](RUN.md)** — *Local setup & running commands*
@@ -55,21 +54,14 @@ All architectural requirements and deliverables are fully documented:
 
 ## 🚀 Quick Start
 
-### 1. Frontend (Next.js)
+### Frontend (Next.js)
 
 ```bash
-cd page-pulse/frontend
+cd pagepulse/frontend
 npm install
 npm run dev
 ```
 Runs locally at `http://localhost:3000`.
-
-### 2. Backend Suite & Unit Tests (Python)
-
-```bash
-cd page-pulse/backend
-python test_auditor.py
-```
 
 ---
 
